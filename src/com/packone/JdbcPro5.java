@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.Statement;
 
 public class JdbcPro5 {
 	String driver="oracle.jdbc.OracleDriver";
@@ -143,9 +144,34 @@ public class JdbcPro5 {
 		
 		
 	}
+	//Updateable
+	void updateMethod() {
+		Connection con=connect();
+		try(con) {
+			Statement stm =con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			 ResultSet rs=stm.executeQuery("select eid,efname,esal from employee");
+			 while(rs.next()) {
+				 String e_id=rs.getString(1);
+				 if(e_id.equals("102")) {
+					 rs.updateInt(2, 4500);
+					 rs.updateRow();
+					 IO.println("Updated...");
+					 
+				 }
+			 }
+			 IO.println("Updated...");
+			 rs.absolute(3);
+			 IO.println(rs.getString(1)+" "+ rs.getString(2)+" "+ rs.getInt(3));
+			 
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	void main() {
 		JdbcPro5 j= new JdbcPro5();
-		j.patientOperation();
+		//j.patientOperation();
+		j.updateMethod();
 	}
 	
 	
